@@ -66,15 +66,16 @@ class _ParallaxDepthSceneState extends State<ParallaxDepthScene>
       duration: const Duration(days: 365),
     );
 
-    if (!kIsWeb) {
-      _initGyroscope();
-    }
+    // Always try to init gyroscope – works on native AND mobile web browsers.
+    _initGyroscope();
   }
 
   void _initGyroscope() {
-    _gyroSub = gyroscopeEventStream(
-      samplingPeriod: const Duration(milliseconds: 16),
-    ).listen((event) {
+    try {
+      _gyroSub = gyroscopeEventStream(
+        samplingPeriod: const Duration(milliseconds: 16),
+      ).listen(
+        (event) {
       // Gyroscope gives angular velocity in rad/s.
       // We accumulate to approximate the current tilt angle.
       _gyroY += event.x * 0.016; // pitch  → vertical shift
@@ -85,7 +86,16 @@ class _ParallaxDepthSceneState extends State<ParallaxDepthScene>
 
       _targetX = (_gyroX / _gyroClamp).clamp(-1.0, 1.0);
       _targetY = (_gyroY / _gyroClamp).clamp(-1.0, 1.0);
-    });
+        },
+        onError: (_) {
+          // Gyroscope not available (e.g. desktop browser) – fall back to mouse.
+          _gyroSub?.cancel();
+          _gyroSub = null;
+        },
+      );
+    } catch (_) {
+      // Sensor API not supported – silently fall back to mouse/cursor input.
+    }
   }
 
   void _onTick() {

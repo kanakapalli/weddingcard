@@ -172,7 +172,7 @@ class _WeddingInfoPanelState extends State<WeddingInfoPanel>
             ).createShader(bounds);
           },
           child: const Text(
-            'Rajesh',
+            'Harsha',
             style: TextStyle(
               fontSize: 52,
               fontWeight: FontWeight.w300,
@@ -204,7 +204,7 @@ class _WeddingInfoPanelState extends State<WeddingInfoPanel>
             ).createShader(bounds);
           },
           child: const Text(
-            'Priya',
+            'Sahaja',
             style: TextStyle(
               fontSize: 52,
               fontWeight: FontWeight.w300,
